@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en" xmlns:util="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Spring Introduction</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/github.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Spring Introduction</h1>
+					<h3>Spring Framework Brief</h3>
+					<p>
+						<small>Created by <i>Kevin Feng</i></small>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Spring Framework</h2>
+						<p>The Spring Framework is a lightweight solution and a potential one-stop-shop for building your enterprise-ready applications.</p>
+						<ul>
+							<li>modular</li>
+							<li>non-intrusive</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Spring Framework 3.x Overview</h3>
+						<img src="img/spring-overview-3.png">
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Spring Framework Usage</h2>
+					</section>
+					<section>
+						<h3>Spring Core</h3>
+						<ul>
+							<li>OLP</li>
+							<li>SFP</li>
+							<li>MIF</li>
+							<li>...</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Spring DAO</h3>
+						<ul>
+							<li>OLP</li>
+							<li>IR4 use PFW instead</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Spring Web</h3>
+						<ul>
+							<li>JAX-RS instead</li>
+							<li>SOA</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Spring AOP</h3>
+						<ul>
+							<li>OLP</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Spring Test</h3>
+						<ul>
+							<li>OLP</li>
+							<li>Junit 3/4 directly</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Inversion of Control</h2>
+						<h3>(Dependency Injection)</h3>
+						<img src="img/ioc.png">
+					</section>
+					<section>
+						<h2>IoC/DI</h2>
+						<p>IoC (DI) is a process whereby objects define their dependencies, the container then injects those dependencies when it creates the bean.</p>
+					</section>dsze
+				</section>
+
+				<section>
+					<section>
+						<h2>Spring Ioc/DI</h2>
+						<p>Container in Spring: <u>ApplicationContext</u></p>
+						<p>Object in Spring: <u>Bean</u></p>
+					</section>
+					<section>
+						<h2>Application Context</h2>
+						<b>Configuration Metadata:</b>
+						<p>Xml based application context </p>
+						<p>Annotation based context</p>
+						<p>Java based context</p>
+						<p>...</p>
+					</section>
+					<section>
+						<h3>Xml based</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="..." class="...">
+    <!-- collaborators and configuration for this bean go here -->
+  </bean>
+
+  <bean id="..." class="...">
+    <!-- collaborators and configuration for this bean go here -->
+  </bean>
+
+  <!-- more bean definitions go here -->
+
+  <import resource="services.xml"></import>
+</beans>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+ApplicationContext context = new FileSystemXmlApplicationContext("config.xml");
+						</code></pre>
+					</section>
+					<section>
+						<h3>Annotation Based</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@Service
+@Scope("prototype")
+public class MessagePrinter {
+    final private MessageService service;
+
+    @Autowired
+    public MessagePrinter(MessageService service) {
+        this.service = service;
+    }
+
+    public void printMessage() {
+        count++;
+        System.out.println(this.service.getMessage());
+    }
+}
+
+						</code></pre>
+						<p>@Component</p>
+						<p>@Repository  @Service  @Controller</p>
+					</section>
+					<section>
+						<h3>Java based</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@Configuration
+@ComponentScan(basePackages = "com.oocl.frm.demo.spring.annotated")
+public class Application {
+
+    @Bean
+    MessageService mockMessageService() {
+        return () -> "Hello World!";
+    }
+
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
+
+        MessageService service = context.getBean(MessageService.class);
+
+    }
+}
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Bean Definition</h2>
+						<ul>
+							<li>id</li>
+							<li>name</li>
+							<li>scope</li>
+							<li>constructor</li>
+							<li>property</li>
+							<li>autowiring mode</li>
+							<li>lazy-initialization mode</li>
+							<li>initialization method</li>
+							<li>destruction method</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Example</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="exBean" name="exBean1 exBean2 exBean3" class="com.oocl.frm.demo.spring.beans.ExBean"
+	  lazy-init="true" scope="prototype" init-method="init" destroy-method="destroy" autowire="byName">
+	<constructor-arg index="0" value="key1"></constructor-arg>
+	<constructor-arg index="1" value="2"></constructor-arg>
+	<property name="desc" value="Description"></property>
+</bean>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="com.oocl.frm.demo.spring.beans.ExBean" c:key="key0" c:_1="3" p:desc="test"></bean>
+						</code></pre>
+					</section>
+					<section>
+						<h3>scope</h3>
+						<p>prototype</p>
+						<p>singleton</p>
+						<p>request</p>
+						<p>session</p>
+						<p>global session</p>
+						<p>customized scope</p>
+						<b>Scope with dependencies?</b>
+					</section>
+					<section>
+						<h3>Autowiring</h3>
+						<p>no</p>
+						<p>byName</p>
+						<p>byType</p>
+						<p>constructor</p>
+						<b>Limitations</b>
+					</section>
+					<section>
+						<h3>initialization method</h3>
+						<b>Initialization Order</b>
+						<p>@PostConstruct</p>
+						<p>InitializingBean</p>
+						<p>init-method</p>
+					</section>
+					<section>
+						<h3>destruction method</h3>
+						<b>Destruction Order</b>
+						<p>@PreDestroy</p>
+						<p>DisposableBean</p>
+						<p>destroy-method</p>
+					</section>
+					<section>
+						<h3>depends-on</h3>
+						<p>explicit initialization dependency</p>
+					</section>
+					<section>
+						<h3>Factory</h3>
+						<p>factory-method</p>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="color" class="com.oocl.frm.demo.spring.beans.ColorBean" factory-method="getStaticInstance"></bean>
+						</code></pre>
+						<p>factory-bean</p>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="colorFactory" class="com.oocl.frm.demo.spring.beans.ColorFactory" factory-method="getFactory"></bean>
+
+<bean class="com.oocl.frm.demo.spring.beans.ColorBean" factory-bean="colorFactory"
+	  factory-method="createColorBean"></bean>
+						</code></pre>
+					</section>
+					<section>
+						<h3>Method Injection</h3>
+						<p>Lookup Method</p>
+						<p>Method Replacement</p>
+						<pre><code class="hljs" data-trim contenteditable>
+
+<bean id="red" class="com.oocl.frm.demo.spring.beans.ColorBean">
+	<property name="color" value="red"></property>
+</bean>
+
+<bean id="color" class="com.oocl.frm.demo.spring.beans.ColorBean">
+	<property name="color" value="blue"></property>
+	<lookup-method name="getBean" bean="red"></lookup-method>
+	<replaced-method name="printColor" replacer="brush"></replaced-method>
+</bean>
+
+<bean id="brush" class="com.oocl.frm.demo.spring.beans.Brush"></bean>
+						</code></pre>
+					</section>
+					<section>
+						<h3>component-scan</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<context:component-scan base-package="com.oocl.frm.demo.spring.beans">
+  <context:include-filter type="regex" expression=".*Stub.*Repository"></context:include-filter>
+  <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"></context:exclude-filter>
+</context:component-scan>
+						</code></pre>
+					</section>
+					<section>
+						<h3>import</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<import resource="template*.xml"/></code></pre>
+					</section>
+					<section>
+						<h3>place holder</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<property name="ignoreUnresolvablePlaceholders" value="true"></property>
+	<property name="location" value="classpath:env.properties"></property>
+</bean>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:env.properties"/></code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>LifeCycle</h2>
+						<ul>
+							<li>Construct</li>
+							<li>Aware</li>
+							<li>BeanPostProcessor</li>
+							<li>Initialization</li>
+							<li>Destruction</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h2>Annotation Based</h2>
+					<pre><code class="hljs" data-trim contenteditable>
+   <context:annotation-config/></code></pre>
+					<ul>
+						<li>@Resource</li>
+						<li>@Autowired</li>
+						<li>@Required</li>
+						<li>@Qualifier</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Java Based</h2>
+					<ul>
+						<li>@Configuration</li>
+						<li>@Bean</li>
+						<li>@Import</li>
+						<li>@ComponentScan</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Util Set & Misc</h2>
+					</section>
+					<section>
+						<h2>Collections</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="map1" class="java.util.HashMap">
+	<constructor-arg>
+		<map>
+			<entry key="aa" value="bb"></entry>
+			<entry key="aa1" value="bb3"></entry>
+			<entry key="aa2" value="bb6"></entry>
+		</map>
+	</constructor-arg>
+</bean>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<util:map id="map2">
+	<entry key="aa" value="bb"></entry>
+	<entry key="aa1" value="bb3"></entry>
+	<entry key="aa2" value="bb6"></entry>
+</util:map>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="com.oocl.frm.demo.spring.beans.RefBean">
+	<property name="refValue">
+		<list>
+			<value>v1</value>
+			<value>v2</value>
+			<value>v3</value>
+		</list>
+	</property>
+</bean>
+						</code></pre>
+					</section>
+					<section>
+						<h2>Constant</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+<util:constant id="const1" static-field="com.oocl.frm.demo.spring.beans.RefBean.REF_2"></util:constant>
+
+<bean class="com.oocl.frm.demo.spring.beans.RefBean">
+	<property name="ref" ref="const1"></property>
+</bean>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="com.oocl.frm.demo.spring.beans.RefBean">
+	<property name="ref">
+		<util:constant id="const1" static-field="com.oocl.frm.demo.spring.beans.RefBean.REF_2"></util:constant>
+	</property>
+</bean>
+						</code></pre>
+					</section>
+					<section>
+						<h2>Enum</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="com.oocl.frm.demo.spring.beans.RefBean">
+	<property name="refEnum" value="ENUM_2"></property>
+</bean>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="enum1" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+	<property name="staticField" value="com.oocl.frm.demo.spring.beans.RefEnum.ENUM_1"></property>
+</bean>
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h2>Pros & Cons</h2>
+					<b>Pros:</b>
+					<p>Dependency Injection</p>
+					<p>Decouple</p>
+					<p>Easier testing</p>
+					<p>etc.</p>
+					<b>Cons:</b>
+					<p>Exception at runtime</p>
+					<p>Hard to debug</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Spring AOP</h2>
+					</section>
+					<section>
+						<h3>Aspect-Oriented Programming</h3>
+						<img src="img/aop.jpg"/>
+					</section>
+					<section>
+						<h3>AOP Concepts</h3>
+						<ul>
+							<li>Aspect</li>
+							<li>Join point</li>
+							<ol>method execution in Spring</ol>
+							<li>Advice</li>
+							<li>Pointcut</li>
+							<li>Introduction</li>
+							<li>Target/Advised/Proxied object</li>
+							<li>AOP proxy</li>
+							<ol>JDK dynamic proxy/ CGLIB proxy</ol>
+							<li>Weaving</li>
+							<ol>at compile time/ load time/ <u>runtime</u></ol>
+						</ul>
+					</section>
+					<section>
+						<h3>Types of Advice</h3>
+						<ul>
+							<li>Before advice</li>
+							<li>After returning advice</li>
+							<li>After throwing advice</li>
+							<li>After (finally) advice</li>
+							<li>Around advice</li>
+						</ul>
+					</section>
+					<section>
+						<h3>AOP Proxy</h3>
+						<p><img src="img/pojo-call.png"></p>
+						<p><img src="img/pojo-proxy.png"></p>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>@AspectJ support</h2>
+					</section>
+					<section>
+						<h3>Enable @AspectJ support</h3>
+						<p>Java based</p>
+						<pre><code class="hljs" data-trim contenteditable>
+@Configuration
+@EnableAspectJAutoProxy
+public class Application {
+
+}
+						</code></pre>
+						<p>Xml based</p>
+						<pre><code class="hljs" data-trim contenteditable>
+<aop:aspectj-autoproxy/></code></pre>
+					</section>
+					<section>
+						<h3>Declaring an aspect</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean class="com.oocl.frm.demo.spring.aop.TestAnnotatedAspect"/></code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+@Aspect
+public class TestAnnotatedAspect {
+
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring an pointcut</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@Pointcut(value = "execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))")
+public void testCutoff() {
+
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pointcut designators supported</h3>
+						<ul>
+							<li><em>execution</em> - matching method</li>
+							<li><em>within</em> - limits matching within certain types</li>
+							<li><em>this</em> - limits the proxy object to the given type</li>
+							<li><em>target</em> - limits the target object to the given type</li>
+							<li><em>args</em> - limits the arguments to the given types</li>
+							<li><em>@target</em> - limits the class of the executing object has an annotation of the given type </li>
+							<li><em>@args</em> - limits the actual arguments passed have annotations of the given type(s) </li>
+							<li><em>@within</em> - limits matching within types have the given annotation</li>
+							<li><em>@annotation</em> - limits the subject has the given annotation</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Pointcut examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+//the execution of any public method:
+execution(public * *(..))
+//the execution of any method with a name beginning with "set":
+execution(* set*(..))
+//the execution of any method defined by the AccountService interface:
+execution(* com.xyz.service.AccountService.*(..))
+//the execution of any method defined in the service package:
+execution(* com.xyz.service.*.*(..))
+//the execution of any method defined in the service package or a sub-package:
+execution(* com.xyz.service..*.*(..))
+//any method execution within the service package:
+within(com.xyz.service.*)
+//any method execution within the service package or a sub-package:
+within(com.xyz.service..*)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Pointcut examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+//any method execution where the proxy implements the AccountService interface:
+this(com.xyz.service.AccountService)
+//any method execution where the target object implements the AccountService interface:
+target(com.xyz.service.AccountService)
+//any method execution which takes a single parameter, and where the argument passed at runtime is Serializable:
+args(java.io.Serializable)
+//any method execution where the target object has an @Transactional annotation:
+@target(org.springframework.transaction.annotation.Transactional)
+//any method execution where the declared type of the target object has an @Transactional annotation:
+@within(org.springframework.transaction.annotation.Transactional)
+//any method execution where the executing method has an @Transactional annotation:
+@annotation(org.springframework.transaction.annotation.Transactional)
+//any method execution which takes a single parameter, and where the runtime type of the argument passed has the @Classified annotation:
+@args(com.xyz.security.Classified)
+//any method execution on a Spring bean named 'tradeService':
+bean(tradeService)
+//any method execution on Spring beans having names that match the wildcard expression '*Service':
+bean(*Service)
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring Before Advice</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@Before(value = "testCutoff()")
+public void before(JoinPoint joinPoint) throws Throwable {
+	System.out.println("before: " + joinPoint.getSignature() + "A" + count++);
+}
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+@Before(value = "execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))")
+public void before(JoinPoint joinPoint) throws Throwable {
+	System.out.println("before: " + joinPoint.getSignature() + "A" + count++);
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring After returning Advice</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@AfterReturning(value = "testCutoff()")
+public void afterReturning(JoinPoint joinPoint) throws Throwable {
+	System.out.println("after " + joinPoint.getSignature() + " return: A" + count++);
+}
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+@AfterReturning(value = "testCutoff()", returning = "val")
+public void afterReturning(JoinPoint joinPoint, Object val) throws Throwable {
+	System.out.println("after " + joinPoint.getSignature() + " return: " + val + "A" + count++);
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring After throwing Advice</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@AfterThrowing(value = "testCutoff()")
+public void afterThrowing(JoinPoint joinPoint) throws Throwable {
+	System.out.println("after throw exception: " + joinPoint.getSignature() + "A" + count++);
+}
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+@AfterThrowing(value = "testCutoff()", throwing = "ex")
+public void afterThrowing(JoinPoint joinPoint, Exception ex) throws Throwable {
+	System.out.println("after throw exception: " + joinPoint.getSignature() + "A" + count++);
+	throw ex;
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring After Advice</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@After(value = "testCutoff()")
+public void after(JoinPoint joinPoint) throws Throwable {
+	System.out.println("after: " + joinPoint.getSignature() + "A" + count++);
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Declaring Around  Advice</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+@Around(value = "testCutoff()")
+public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
+	System.out.println("around before:" + "A" + count++);
+	Object proceed = joinPoint.proceed();
+	System.out.println("around after:" + "A" + count++);
+	return proceed;
+}
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Schema-based AOP</h2>
+					</section>
+					<section>
+						<h3>Declaring the aspect</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<aop:config>
+	<aop:aspect id="aspect" ref="testAspect">
+		<aop:declare-parents types-matching="com.oocl.frm.demo.spring.aop.*+"
+							 implement-interface="com.oocl.frm.demo.spring.aop.TestIntroduction"
+							 default-impl="com.oocl.frm.demo.spring.aop.TestIntroductionImpl"/>
+		<aop:pointcut id="testCut" expression="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))"/>
+		<aop:around method="invoke2" pointcut-ref="testCut"/>
+		<aop:around method="invoke" pointcut="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..)) and this(introduction)"/>
+		<aop:after-throwing throwing="ex" method="afterThrowing" pointcut-ref="testCut"/>
+		<aop:after-returning returning="val" method="afterReturning" pointcut-ref="testCut"/>
+		<aop:after method="after" pointcut-ref="testCut"/>
+		<aop:before method="before" pointcut-ref="testCut"/>
+	</aop:aspect>
+</aop:config>
+						</code></pre>
+					</section>
+					<section>
+						<h3>Advice parameters</h3>
+						<p>JoinPoint</p>
+						<pre><code class="hljs" data-trim contenteditable>
+@Around(value = "testCutoff() && args(value)")
+public Object invoke(ProceedingJoinPoint joinPoint, Object value) throws Throwable {
+	System.out.println("around before:" + "A" + count++);
+	System.out.println("args:" + value);
+	Object proceed = joinPoint.proceed();
+	System.out.println("around after:" + "A" + count++);
+	return proceed;
+}
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<aop:around method="invoke" pointcut="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..)) and this(introduction)" arg-names="introduction"/>
+						</code></pre>
+					</section>
+					<section>
+						<h3>Advice ordering</h3>
+						<p>The highest precedence advice runs first on the way in</p>
+						<p>The highest precedence advice runs last  on the way out</p>
+						<pre><code class="hljs" data-trim contenteditable>
+@Aspect
+public class TestAnnotatedAspect implements Ordered{
+
+    @Override
+    public int getOrder() {
+        return 2;
+    }
+}
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+<aop:aspect id="aspect" ref="testAspect" order="6"/> </code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>Spring AOP API</h2>
+					</section>
+					<section>
+						<h3>Spring Advice API</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+public class TestAdvice implements MethodBeforeAdvice, MethodInterceptor, ThrowsAdvice, AfterReturningAdvice {
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        System.out.println("around before: " + this);
+        Object proceed = methodInvocation.proceed();
+        System.out.println("around after: " + this);
+        return proceed;
+    }
+
+    @Override
+    public void before(Method method, Object[] objects, Object o) throws Throwable {
+        System.out.println("before: " + this);
+
+    }
+
+    public void afterThrowing(Throwable throwable) throws Throwable {
+        System.out.println("after throw exception: " + this);
+        throw throwable;
+    }
+
+    @Override
+    public void afterReturning(Object o, Method method, Object[] objects, Object o1) throws Throwable {
+        System.out.println("after return: " + this);
+    }
+
+}
+						</code></pre>
+					</section>
+					<section>
+						<h3>Advisors</h3>
+						<p></p>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="testAdvisor" class="com.oocl.frm.demo.spring.aop.TestAdvice" scope="prototype"></bean>
+
+<aop:config>
+	<aop:pointcut id="testCut1" expression="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))"></aop:pointcut>
+	<aop:advisor advice-ref="testAdvisor" pointcut-ref="testCut1"></aop:advisor>
+</aop:config>
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h1>THE END</h1>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				width: 1024,
+				height: 768,
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
