@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Spring IO</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>SpEL</h1>
+					<h3>Spring Expression Language</h3>
+					<p>
+						<small>Created by <i>Kevin Feng</i></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Spring Framework 3.x</h2>
+					<img src="img/spring-overview-3.png">
+				</section>
+
+				<section>
+					<h2>Spring Framework 4.x</h2>
+					<img src="img/spring-overview.png">
+				</section>
+
+				<section>
+					<section>
+						<h2>SpEL Overview</h2>
+					</section>
+					<section>
+						<h3>SpEL</h3>
+						<dl>
+							<dt>SpEL is a powerful expression language that supports querying and manipulating an object graph at runtime.</dt>
+							<dd>similar to Unified EL but offers additional features</dd>
+							<dd>foundation in Spring portfolio, while not tied to Spring</dd>
+						</dl>
+					</section>
+					<section>
+						<h3>Other EL Implementation</h3>
+						<ul>
+							<li>JUEL</li>
+							<li>JEXL</li>
+							<li>OGNL</li>
+							<li>MVEL</li>
+							<li>JBoss EL</li>
+							<li>Ant-Flaka</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Feature Overview 1</h3>
+						<ul>
+							<li>Literal expressions</li>
+							<li>Boolean and relational operators</li>
+							<li>Regular expressions</li>
+							<li>Class expressions</li>
+							<li>Accessing properties, arrays, lists, maps</li>
+							<li>Method invocation</li>
+							<li>Relational operators</li>
+							<li>Assignment</li>
+							<li>Calling constructors</li>
+							<li>tbc.</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Feature Overview 2</h3>
+						<ul>
+							<li>Bean references</li>
+							<li>Array construction</li>
+							<li>Inline lists</li>
+							<li>Inline maps(4.x)</li>
+							<li>Ternary operator</li>
+							<li>Variables</li>
+							<li>User defined functions</li>
+							<li>Collection projection</li>
+							<li>Collection selection</li>
+							<li>Templated expressions</li>
+						</ul>
+					</section>
+					<section>
+						<h3>SpEL Examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+
+// invokes 'getBytes().length'
+Expression exp = parser.parseExpression("'Hello World'.bytes.length");
+int length = (Integer) exp.getValue();</code></pre>
+					</section>
+					<section>
+						<h3>SpEL Examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// Create and set a calendar
+GregorianCalendar c = new GregorianCalendar();
+c.set(1856, 7, 9);
+
+// The constructor arguments are name, birthday, and nationality.
+Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
+
+ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("name");
+
+EvaluationContext context = new StandardEvaluationContext(tesla);
+String name = (String) exp.getValue(context);</code></pre>
+					</section>
+					<section>
+						<h3>SpEL Examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// Create and set a calendar
+GregorianCalendar c = new GregorianCalendar();
+c.set(1856, 7, 9);
+
+// The constructor arguments are name, birthday, and nationality.
+Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
+
+ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("name");
+String name = (String) exp.getValue(tesla);</code></pre>
+					</section>
+					<section>
+						<h3>SpEL Examples</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// Create and set a calendar
+GregorianCalendar c = new GregorianCalendar();
+c.set(1856, 7, 9);
+
+// The constructor arguments are name, birthday, and nationality.
+Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
+
+ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("name == 'Nikola Tesla'");
+boolean result = exp.getValue(context, Boolean.class);
+// evaluates to true</code></pre>
+					</section>
+					<section>
+						<h3>SpEL Context</h3>
+						<ul>
+							<li>EvaluationContext </li>
+						</ul>
+					</section>
+					<section>
+						<h3>SpEL Parser</h3>
+						<ul>
+							<li>SpelParserConfiguration</li>
+							<li>auto null reference initialization</li>
+							<li>auto collection growing</li>
+						</ul>
+					</section>
+					<section>
+						<h3>SpEL Compilation (4.1)</h3>
+						<ul>
+							<li>OFF </li>
+							<li>IMMEDIATE </li>
+							<li>MIXED </li>
+						</ul>
+						<p>Limitations</p>
+						<ul>
+							<li>assignment </li>
+							<li>conversion service </li>
+							<li>custom resolvers or accessors </li>
+							<li>selection or projection </li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>SpEL support for defining bean definitions</h2>
+					</section>
+					<section>
+						<h3>XML based configuration</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<bean id="taxCalculator" class="org.spring.samples.TaxCalculator">
+    <property name="defaultLocale" value="#{ systemProperties['user.region'] }"/>
+
+	<!-- other properties -->
+</bean>
+
+<bean id="numberGuess" class="org.spring.samples.NumberGuess">
+    <property name="randomNumber" value="#{ T(java.lang.Math).random() * 100.0 }"/>
+
+	<!-- other properties -->
+</bean>
+
+<bean id="shapeGuess" class="org.spring.samples.ShapeGuess">
+    <property name="initialShapeSeed" value="#{ numberGuess.randomNumber }"/>
+
+	<!-- other properties -->
+</bean> </code></pre>
+					</section>
+					<section>
+						<h3>Annotation-based configuration</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+public static class FieldValueTestBean
+
+    @Value("#{ systemProperties['user.region'] }")
+    private String defaultLocale;
+
+    public void setDefaultLocale(String defaultLocale) {
+        this.defaultLocale = defaultLocale;
+    }
+
+    public String getDefaultLocale() {
+        return this.defaultLocale;
+    }
+
+}</code></pre>
+					</section>
+					<section>
+						<h3>Annotation-based configuration</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+public class SimpleMovieLister {
+
+    private MovieFinder movieFinder;
+    private String defaultLocale;
+
+    @Autowired
+    public void configure(MovieFinder movieFinder,
+            @Value("#{ systemProperties['user.region'] }") String defaultLocale) {
+        this.movieFinder = movieFinder;
+        this.defaultLocale = defaultLocale;
+    }
+
+    // ...
+}</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2>SpEL Language Reference</h2>
+					</section>
+					<section>
+						<h3>Literal expressions</h3>
+						<p>strings, numeric values (int, real, hex), boolean and null</p>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+
+// evals to "Hello World"
+String helloWorld = (String) parser.parseExpression("'Hello World'").getValue();
+
+double avogadrosNumber = (Double) parser.parseExpression("6.0221415E+23").getValue();
+
+// evals to 2147483647
+int maxValue = (Integer) parser.parseExpression("0x7FFFFFFF").getValue();
+
+boolean trueValue = (Boolean) parser.parseExpression("true").getValue();
+
+Object nullValue = parser.parseExpression("null").getValue();
+						</code></pre>
+					</section>
+					<section>
+						<h3>Properties, Arrays, Lists, Maps, Indexers</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// evals to 1856
+int year = (Integer) parser.parseExpression("Birthdate.Year + 1900").getValue(context);
+
+String city = (String) parser.parseExpression("placeOfBirth.City").getValue(context);
+
+ExpressionParser parser = new SpelExpressionParser();
+
+// Inventions Array
+StandardEvaluationContext teslaContext = new StandardEvaluationContext(tesla);
+
+// evaluates to "Induction motor"
+String invention = parser.parseExpression("inventions[3]").getValue(teslaContext, String.class);
+
+// Members List
+StandardEvaluationContext societyContext = new StandardEvaluationContext(ieee);
+
+// evaluates to "Nikola Tesla"
+String name = parser.parseExpression("Members[0].Name").getValue(societyContext, String.class);
+
+// List and Array navigation
+// evaluates to "Wireless communication"
+String invention = parser.parseExpression("Members[0].Inventions[6]").getValue(societyContext, String.class);
+
+// Officer's Dictionary
+Inventor pupin = parser.parseExpression("Officers['president']").getValue(
+        societyContext, Inventor.class);
+
+// evaluates to "Idvor"
+String city = parser.parseExpression("Officers['president'].PlaceOfBirth.City").getValue(
+        societyContext, String.class);
+
+// setting values
+parser.parseExpression("Officers['advisors'][0].PlaceOfBirth.Country").setValue(
+        societyContext, "Croatia");
+						</code></pre>
+					</section>
+					<section>
+						<h3>Inline Lists</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// evaluates to a Java list containing the four numbers
+List numbers = (List) parser.parseExpression("{1,2,3,4}").getValue(context);
+
+List listOfLists = (List) parser.parseExpression("{{'a','b'},{'x','y'}}").getValue(context);
+						</code></pre>
+						<p>{} : an empty list</p>
+					</section>
+					<section>
+						<h3>Inline Maps (4.x)</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// evaluates to a Java map containing the two entries
+Map inventorInfo = (Map) parser.parseExpression("{name:'Nikola',dob:'10-July-1856'}").getValue(context);
+
+Map mapOfMaps = (Map) parser.parseExpression("{name:{first:'Nikola',last:'Tesla'},dob:{day:10,month:'July',year:1856}}").getValue(context);
+						</code></pre>
+						<p>{:} : an empty map</p>
+					</section>
+					<section>
+						<h3>Array construction</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+int[] numbers1 = (int[]) parser.parseExpression("new int[4]").getValue(context);
+
+// Array with initializer
+int[] numbers2 = (int[]) parser.parseExpression("new int[]{1,2,3}").getValue(context);
+
+// Multi dimensional array
+int[][] numbers3 = (int[][]) parser.parseExpression("new int[4][5]").getValue(context);
+						</code></pre>
+						<p>currently not allowed to supply an initializer when constructing a multi-dimensional array</p>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// string literal, evaluates to "bc"
+String c = parser.parseExpression("'abc'.substring(2, 3)").getValue(String.class);
+
+// evaluates to true
+boolean isMember = parser.parseExpression("isMember('Mihajlo Pupin')").getValue(societyContext, Boolean.class);
+						</code></pre>
+						<p>Varargs are also supported.</p>
+					</section>
+					<section>
+						<h3>Operators - Relational operators</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// evaluates to true
+boolean trueValue = parser.parseExpression("2 == 2").getValue(Boolean.class);
+
+// evaluates to false
+boolean falseValue = parser.parseExpression("2 < -5.0").getValue(Boolean.class);
+
+// evaluates to true
+boolean trueValue = parser.parseExpression("'black' < 'block'").getValue(Boolean.class);
+
+// evaluates to false
+boolean falseValue = parser.parseExpression("'xyz' instanceof T(Integer)").getValue(Boolean.class);
+
+// evaluates to true
+boolean trueValue = parser.parseExpression("'5.00' matches '\^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+
+//evaluates to false
+boolean falseValue = parser.parseExpression("'5.0067' matches '\^-?\\d+(\\.\\d{2})?$'").getValue(Boolean.class);
+						</code></pre>
+						<p>any other value is always greater than <code>null</code></p>
+						<p><code>1 instanceof T(int)</code> evaluates to false !!</p>
+					</section>
+					<section>
+						<h3>Operators - Logical operators</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// -- AND --
+
+// evaluates to false
+boolean falseValue = parser.parseExpression("true and false").getValue(Boolean.class);
+
+// evaluates to true
+String expression = "isMember('Nikola Tesla') and isMember('Mihajlo Pupin')";
+boolean trueValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+
+// -- OR --
+
+// evaluates to true
+boolean trueValue = parser.parseExpression("true or false").getValue(Boolean.class);
+
+// evaluates to true
+String expression = "isMember('Nikola Tesla') or isMember('Albert Einstein')";
+boolean trueValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+
+// -- NOT --
+
+// evaluates to false
+boolean falseValue = parser.parseExpression("!true").getValue(Boolean.class);
+
+// -- AND and NOT --
+String expression = "isMember('Nikola Tesla') and !isMember('Mihajlo Pupin')";
+boolean falseValue = parser.parseExpression(expression).getValue(societyContext, Boolean.class);
+						</code></pre>
+					</section>
+					<section>
+						<h3>Operators - Mathematical operators</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// Addition
+int two = parser.parseExpression("1 + 1").getValue(Integer.class); // 2
+
+String testString = parser.parseExpression("'test' + ' ' + 'string'").getValue(String.class); // 'test string'
+
+// Subtraction
+int four = parser.parseExpression("1 - -3").getValue(Integer.class); // 4
+
+double d = parser.parseExpression("1000.00 - 1e4").getValue(Double.class); // -9000
+
+// Multiplication
+int six = parser.parseExpression("-2 * -3").getValue(Integer.class); // 6
+
+double twentyFour = parser.parseExpression("2.0 * 3e0 * 4").getValue(Double.class); // 24.0
+
+// Division
+int minusTwo = parser.parseExpression("6 / -3").getValue(Integer.class); // -2
+
+double one = parser.parseExpression("8.0 / 4e0 / 2").getValue(Double.class); // 1.0
+
+// Modulus
+int three = parser.parseExpression("7 % 4").getValue(Integer.class); // 3
+
+int one = parser.parseExpression("8 / 5 % 2").getValue(Integer.class); // 1
+
+// Operator precedence
+int minusTwentyOne = parser.parseExpression("1+2-3*8").getValue(Integer.class); // -21
+						</code></pre>
+					</section>
+					<section>
+						<h3>Assignment</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+Inventor inventor = new Inventor();
+StandardEvaluationContext inventorContext = new StandardEvaluationContext(inventor);
+
+parser.parseExpression("Name").setValue(inventorContext, "Alexander Seovic2");
+
+// alternatively
+String aleks = parser.parseExpression("Name = 'Alexandar Seovic'").getValue(inventorContext, String.class);
+						</code></pre>
+					</section>
+					<section>
+						<h3>Types</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+Class dateClass = parser.parseExpression("T(java.util.Date)").getValue(Class.class);
+
+Class stringClass = parser.parseExpression("T(String)").getValue(Class.class);
+
+boolean trueValue = parser.parseExpression(
+        "T(java.math.RoundingMode).CEILING < T(java.math.RoundingMode).FLOOR")
+        .getValue(Boolean.class);
+						</code></pre>
+						<p>T() references to types within java.lang do not need to be fully qualified</p>
+					</section>
+					<section>
+						<h3>Constructors</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+Inventor einstein = p.parseExpression(
+        "new org.spring.samples.spel.inventor.Inventor('Albert Einstein', 'German')")
+        .getValue(Inventor.class);
+
+//create new inventor instance within add method of List
+p.parseExpression(
+        "Members.add(new org.spring.samples.spel.inventor.Inventor(
+            'Albert Einstein', 'German'))").getValue(societyContext);
+						</code></pre>
+					</section>
+					<section>
+						<h3>Variables</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+Inventor tesla = new Inventor("Nikola Tesla", "Serbian");
+StandardEvaluationContext context = new StandardEvaluationContext(tesla);
+context.setVariable("newName", "Mike Tesla");
+
+parser.parseExpression("Name = #newName").getValue(context);
+
+System.out.println(tesla.getName()) // "Mike Tesla"
+
+// create an array of integers
+List&lt;Integer> primes = new ArrayList&lt;Integer>();
+primes.addAll(Arrays.asList(2,3,5,7,11,13,17));
+
+// create parser and set variable 'primes' as the array of integers
+ExpressionParser parser = new SpelExpressionParser();
+StandardEvaluationContext context = new StandardEvaluationContext();
+context.setVariable("primes",primes);
+
+// all prime numbers > 10 from the list (using selection ?{...})
+// evaluates to [11, 13, 17]
+List&lt;Integer> primesGreaterThanTen = (List&lt;Integer>) parser.parseExpression(
+        "#primes.?[#this>10]").getValue(context);
+						</code></pre>
+						<small>#this</small>
+						<small>#root</small>
+					</section>
+					<section>
+						<h3>Functions</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+StandardEvaluationContext context = new StandardEvaluationContext();
+
+context.registerFunction("reverseString",
+    StringUtils.class.getDeclaredMethod("reverseString", new Class[] { String.class }));
+
+String helloWorldReversed = parser.parseExpression(
+    "#reverseString('hello')").getValue(context, String.class);
+						</code></pre>
+					</section>
+					<section>
+						<h3>Bean references</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+StandardEvaluationContext context = new StandardEvaluationContext();
+context.setBeanResolver(new MyBeanResolver());
+
+// This will end up calling resolve(context,"foo") on MyBeanResolver during evaluation
+Object bean = parser.parseExpression("@foo").getValue(context);
+						</code></pre>
+						<p>access a factory bean itself</p>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+StandardEvaluationContext context = new StandardEvaluationContext();
+context.setBeanResolver(new MyBeanResolver());
+
+// This will end up calling resolve(context,"&foo") on MyBeanResolver during evaluation
+Object bean = parser.parseExpression("&foo").getValue(context);
+						</code></pre>
+					</section>
+					<section>
+						<h3>Ternary Operator</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+parser.parseExpression("Name").setValue(societyContext, "IEEE");
+societyContext.setVariable("queryName", "Nikola Tesla");
+
+expression = "isMember(#queryName)? #queryName + ' is a member of the ' " +
+        "+ Name + ' Society' : #queryName + ' is not a member of the ' + Name + ' Society'";
+
+String queryResultString = parser.parseExpression(expression)
+        .getValue(societyContext, String.class);
+// queryResultString = "Nikola Tesla is a member of the IEEE Society"
+						</code></pre>
+					</section>
+					<section>
+						<h3>The Elvis Operator</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+
+Inventor tesla = new Inventor("Nikola Tesla", "Serbian");
+StandardEvaluationContext context = new StandardEvaluationContext(tesla);
+
+String name = parser.parseExpression("Name?:'Elvis Presley'").getValue(context, String.class);
+
+System.out.println(name); // Nikola Tesla
+
+tesla.setName(null);
+
+name = parser.parseExpression("Name?:'Elvis Presley'").getValue(context, String.class);
+
+System.out.println(name); // Elvis Presley
+						</code></pre>
+					</section>
+					<section>
+						<h3>Safe Navigation operator</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+ExpressionParser parser = new SpelExpressionParser();
+
+Inventor tesla = new Inventor("Nikola Tesla", "Serbian");
+tesla.setPlaceOfBirth(new PlaceOfBirth("Smiljan"));
+
+StandardEvaluationContext context = new StandardEvaluationContext(tesla);
+
+String city = parser.parseExpression("PlaceOfBirth?.City").getValue(context, String.class);
+System.out.println(city); // Smiljan
+
+tesla.setPlaceOfBirth(null);
+
+city = parser.parseExpression("PlaceOfBirth?.City").getValue(context, String.class);
+
+System.out.println(city); // null - does not throw NullPointerException!!!
+						</code></pre>
+					</section>
+					<section>
+						<h3>Collection Selection</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+List&lt;Inventor> list = (List&lt;Inventor>) parser.parseExpression(
+        "Members.?[Nationality == 'Serbian']").getValue(societyContext);
+
+Map newMap = parser.parseExpression("map.?[value<27]").getValue();
+						</code></pre>
+						<p>^[...] : the first matching entry</p>
+						<p>$[...] : the last matching entry</p>
+					</section>
+					<section>
+						<h3>Collection Projection</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+// returns ['Smiljan', 'Idvor' ]
+List placesOfBirth = (List)parser.parseExpression("Members.![placeOfBirth.city]");
+						</code></pre>
+						<p>Varargs are also supported.</p>
+					</section>
+					<section>
+						<h3>Expression templating</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+String randomPhrase = parser.parseExpression(
+        "random number is #{T(java.lang.Math).random()}",
+        new TemplateParserContext()).getValue(String.class);
+
+// evaluates to "random number is 0.7038186818312008"
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+public class TemplateParserContext implements ParserContext {
+
+    public String getExpressionPrefix() {
+        return "#{";
+    }
+
+    public String getExpressionSuffix() {
+        return "}";
+    }
+
+    public boolean isTemplate() {
+        return true;
+    }
+}
+						</code></pre>
+					</section>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				width: 1024,
+				height: 768,
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

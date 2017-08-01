@@ -112,7 +112,157 @@
 					<section>
 						<h2>IoC/DI</h2>
 						<p>IoC (DI) is a process whereby objects define their dependencies, the container then injects those dependencies when it creates the bean.</p>
-					</section>dsze
+					</section>
+					<section>
+						<h2>Dependency Injection</h2>
+						<ul>
+							<li>Interface Injection</li>
+							<li>Constructor Injection</li>
+							<li>Setter Injection</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Dependency Injection</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+class MovieLister...
+  public Movie[] moviesDirectedBy(String arg) {
+      List allMovies = finder.findAll();
+      for (Iterator it = allMovies.iterator(); it.hasNext();) {
+          Movie movie = (Movie) it.next();
+          if (!movie.getDirector().equals(arg)) it.remove();
+      }
+      return (Movie[]) allMovies.toArray(new Movie[allMovies.size()]);
+  }
+						</code></pre>
+						<p>The <span style="color:red">finder</span></p>
+						<pre><code class="hljs" data-trim contenteditable>
+public interface MovieFinder {
+    List findAll();
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>Interface Injection</h2>
+						<p>component</p>
+						<pre><code class="hljs" data-trim contenteditable>
+public interface InjectFinder {
+    void injectFinder(MovieFinder finder);
+}
+
+class MovieLister implements InjectFinder
+  public void injectFinder(MovieFinder finder) {
+      this.finder = finder;
+  }
+						</code></pre>
+						<p>component & injector</p>
+						<pre><code class="hljs" data-trim contenteditable>
+public interface Injector {
+  public void inject(Object target);
+}
+
+class ColonMovieFinder implements MovieFinder, Injector...
+  public void inject(Object target) {
+    ((InjectFinder) target).injectFinder(this);
+  }
+						</code></pre>
+					</section>
+					<section>
+						<h2>Interface Injection</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+class Tester...
+  private Container container;
+
+   private void configureContainer() {
+     container = new Container();
+     //register components
+     container.registerComponent("MovieLister", MovieLister.class);
+     container.registerComponent("MovieFinder", ColonMovieFinder.class);
+     //register injectors
+     container.registerInjector(InjectFinder.class, container.lookup("MovieFinder"));
+  }
+
+   public void testIface() {
+     configureContainer();
+     MovieLister lister = (MovieLister)container.lookup("MovieLister");
+     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
+     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
+  }
+						</code></pre>
+					</section>
+					<section>
+						<h2>Constructor Injection</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+class MovieLister...
+  public MovieLister(MovieFinder finder) {
+      this.finder = finder;
+  }
+
+class ColonMovieFinder...
+  public ColonMovieFinder() {
+  }
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+class Tester...
+   private void configureContainer() {
+     container = new Container();
+     container.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class);
+     container.registerComponentImplementation(MovieLister.class);
+  }
+
+   public void testIface() {
+     configureContainer();
+     MovieLister lister = (MovieLister) container.getComponentInstance(MovieLister.class);
+     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
+     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
+  }
+						</code></pre>
+					</section>
+					<section>
+						<h2>Setter Injection</h2>
+						<pre><code class="hljs" data-trim contenteditable>
+class MovieLister...
+  private MovieFinder finder;
+  public void setFinder(MovieFinder finder) {
+    this.finder = finder;
+  }
+
+class ColonMovieFinder...
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+class Tester...
+   private void configureContainer() {
+     container = new Container();
+     Component movieFinder = container.registerComponent(ColonMovieFinder.class);
+     Component movieLister = container.registerComponent(MovieLister.class);
+     movieLister.setProperty("finder", movieFinder);
+  }
+
+   public void testIface() {
+     configureContainer();
+     MovieLister lister = (MovieLister) container.getComponent(MovieLister.class);
+     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
+     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
+  }
+						</code></pre>
+					</section>
+					<section>
+						<h2>Conclusion</h2>
+						<p>Interface Injection</p>
+						<ul>
+							<li>invasive</li>
+						</ul>
+						<p>Constructor Injection</p>
+						<ul>
+							<li>valid objects at construction time</li>
+							<li>immutable state/fields</li>
+							<li>ordered injection</li>
+						</ul>
+						<p>Setter Injection</p>
+						<ul>
+							<li>mess with multiple constructors/ simple type/ inheritance</li>
+							<li>required by 3rd lib with provided constructors</li>
+						</ul>
+					</section>
 				</section>
 
 				<section>

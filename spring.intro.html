@@ -70,7 +70,6 @@
 						<ul>
 							<li>OLP</li>
 							<li>SFP</li>
-							<li>MIF</li>
 							<li>...</li>
 						</ul>
 					</section>
@@ -105,6 +104,33 @@
 
 				<section>
 					<section>
+						<h3>Spring Start up</h3>
+					</section>
+					<section>
+						<h3>Start up Project</h3>
+						<img src="img/spring-overview-3.png">
+					</section>
+					<section>
+						<h3>Import the libraries</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<dependency>
+	<groupId>thirdparty_tools</groupId>
+	<artifactId>Spring</artifactId>
+	<version>3.0.5_full</version>
+</dependency>
+
+<dependency>
+	<groupId>thirdparty_tools</groupId>
+	<artifactId>commons-logging</artifactId>
+	<version>1.0.3</version>
+	<type>pom</type>
+</dependency>
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
 						<h2>Inversion of Control</h2>
 						<h3>(Dependency Injection)</h3>
 						<img src="img/ioc.png">
@@ -112,156 +138,6 @@
 					<section>
 						<h2>IoC/DI</h2>
 						<p>IoC (DI) is a process whereby objects define their dependencies, the container then injects those dependencies when it creates the bean.</p>
-					</section>
-					<section>
-						<h2>Dependency Injection</h2>
-						<ul>
-							<li>Interface Injection</li>
-							<li>Constructor Injection</li>
-							<li>Setter Injection</li>
-						</ul>
-					</section>
-					<section>
-						<h2>Dependency Injection</h2>
-						<pre><code class="hljs" data-trim contenteditable>
-class MovieLister...
-  public Movie[] moviesDirectedBy(String arg) {
-      List allMovies = finder.findAll();
-      for (Iterator it = allMovies.iterator(); it.hasNext();) {
-          Movie movie = (Movie) it.next();
-          if (!movie.getDirector().equals(arg)) it.remove();
-      }
-      return (Movie[]) allMovies.toArray(new Movie[allMovies.size()]);
-  }
-						</code></pre>
-						<p>The <span style="color:red">finder</span></p>
-						<pre><code class="hljs" data-trim contenteditable>
-public interface MovieFinder {
-    List findAll();
-}
-						</code></pre>
-					</section>
-					<section>
-						<h2>Interface Injection</h2>
-						<p>component</p>
-						<pre><code class="hljs" data-trim contenteditable>
-public interface InjectFinder {
-    void injectFinder(MovieFinder finder);
-}
-
-class MovieLister implements InjectFinder
-  public void injectFinder(MovieFinder finder) {
-      this.finder = finder;
-  }
-						</code></pre>
-						<p>component & injector</p>
-						<pre><code class="hljs" data-trim contenteditable>
-public interface Injector {
-  public void inject(Object target);
-}
-
-class ColonMovieFinder implements MovieFinder, Injector...
-  public void inject(Object target) {
-    ((InjectFinder) target).injectFinder(this);
-  }
-						</code></pre>
-					</section>
-					<section>
-						<h2>Interface Injection</h2>
-						<pre><code class="hljs" data-trim contenteditable>
-class Tester...
-  private Container container;
-
-   private void configureContainer() {
-     container = new Container();
-     //register components
-     container.registerComponent("MovieLister", MovieLister.class);
-     container.registerComponent("MovieFinder", ColonMovieFinder.class);
-     //register injectors
-     container.registerInjector(InjectFinder.class, container.lookup("MovieFinder"));
-  }
-
-   public void testIface() {
-     configureContainer();
-     MovieLister lister = (MovieLister)container.lookup("MovieLister");
-     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
-     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
-  }
-						</code></pre>
-					</section>
-					<section>
-						<h2>Constructor Injection</h2>
-						<pre><code class="hljs" data-trim contenteditable>
-class MovieLister...
-  public MovieLister(MovieFinder finder) {
-      this.finder = finder;
-  }
-
-class ColonMovieFinder...
-  public ColonMovieFinder() {
-  }
-						</code></pre>
-						<pre><code class="hljs" data-trim contenteditable>
-class Tester...
-   private void configureContainer() {
-     container = new Container();
-     container.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class);
-     container.registerComponentImplementation(MovieLister.class);
-  }
-
-   public void testIface() {
-     configureContainer();
-     MovieLister lister = (MovieLister) container.getComponentInstance(MovieLister.class);
-     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
-     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
-  }
-						</code></pre>
-					</section>
-					<section>
-						<h2>Setter Injection</h2>
-						<pre><code class="hljs" data-trim contenteditable>
-class MovieLister...
-  private MovieFinder finder;
-  public void setFinder(MovieFinder finder) {
-    this.finder = finder;
-  }
-
-class ColonMovieFinder...
-						</code></pre>
-						<pre><code class="hljs" data-trim contenteditable>
-class Tester...
-   private void configureContainer() {
-     container = new Container();
-     Component movieFinder = container.registerComponent(ColonMovieFinder.class);
-     Component movieLister = container.registerComponent(MovieLister.class);
-     movieLister.setProperty("finder", movieFinder);
-  }
-
-   public void testIface() {
-     configureContainer();
-     MovieLister lister = (MovieLister) container.getComponent(MovieLister.class);
-     Movie[] movies = lister.moviesDirectedBy("Sergio Leone");
-     assertEquals("Once Upon a Time in the West", movies[0].getTitle());
-  }
-						</code></pre>
-					</section>
-					<section>
-						<h2>Conclusion</h2>
-						<p>Interface Injection</p>
-						<ul>
-							<li>invasive</li>
-						</ul>
-						<p>Constructor Injection</p>
-						<ul>
-							<li>valid objects at construction time</li>
-							<li>immutable state/fields</li>
-							<li>ordered injection</li>
-						</ul>
-						<p>Setter Injection</p>
-						<ul>
-							<li>mess with multiple constructors/ simple type/ inheritance</li>
-							<li>required by 3rd lib with provided constructors</li>
-						</ul>
 					</section>
 				</section>
 
@@ -276,7 +152,7 @@ class Tester...
 						<b>Configuration Metadata:</b>
 						<p>Xml based application context </p>
 						<p>Annotation based context</p>
-						<p>Java based context</p>
+						<p>Java based context (since 3.1)</p>
 						<p>...</p>
 					</section>
 					<section>
@@ -286,7 +162,7 @@ class Tester...
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd">
+	   http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="..." class="...">
     <!-- collaborators and configuration for this bean go here -->
@@ -296,7 +172,7 @@ class Tester...
     <!-- collaborators and configuration for this bean go here -->
   </bean>
 
-  <!-- more bean definitions go here -->
+	<!-- more bean definitions go here -->
 
   <import resource="services.xml"></import>
 </beans>
@@ -332,7 +208,7 @@ public class MessagePrinter {
 						<p>@Repository  @Service  @Controller</p>
 					</section>
 					<section>
-						<h3>Java based</h3>
+						<h3>Java based (since 3.1)</h3>
 						<pre><code class="hljs" data-trim contenteditable>
 @Configuration
 @ComponentScan(basePackages = "com.oocl.frm.demo.spring.annotated")
@@ -484,11 +360,12 @@ public class Application {
 						<h2>LifeCycle</h2>
 						<ul>
 							<li>Construct</li>
-							<li>Aware</li>
+							<li>ContextAware</li>
 							<li>BeanPostProcessor</li>
 							<li>Initialization</li>
 							<li>Destruction</li>
 						</ul>
+						<p>the 'scope'</p>
 					</section>
 				</section>
 
@@ -580,6 +457,45 @@ public class Application {
 </bean>
 						</code></pre>
 					</section>
+				</section>
+
+				<section>
+					<section>
+						<h3>Web application context</h3>
+						<pre><code class="hljs" data-trim contenteditable>
+<context-param>
+<param-name>contextConfigLocation</param-name>
+<param-value>/WEB-INF/daoContext.xml /WEB-INF/applicationContext.xml</param-value>
+</context-param>
+
+<listener>
+<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+						</code></pre>
+						<pre><code class="hljs" data-trim contenteditable>
+WebApplicationContext was = ContextLoader.getCurrentWebApplicationContext();
+
+WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
+						</code></pre>
+						<p>Only available in web context!</p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Obtain beans from context</h2>
+					<pre><code class="hljs" data-trim contenteditable>
+Object getBean(String name) throws BeansException;
+
+&lt;T> T getBean(String name, Class&lt;T> requiredType) throws BeansException;
+
+&lt;T> T getBean(Class&lt;T> requiredType) throws BeansException;
+
+Object getBean(String name, Object... args) throws BeansException;
+
+String[] getBeanNamesForType(Class type);
+
+&lt;T> Map&lt;String, T> getBeansOfType(Class&lt;T> type) throws BeansException;
+						</code></pre>
 				</section>
 
 				<section>
@@ -809,14 +725,14 @@ public Object invoke(ProceedingJoinPoint joinPoint) throws Throwable {
 	<aop:aspect id="aspect" ref="testAspect">
 		<aop:declare-parents types-matching="com.oocl.frm.demo.spring.aop.*+"
 							 implement-interface="com.oocl.frm.demo.spring.aop.TestIntroduction"
-							 default-impl="com.oocl.frm.demo.spring.aop.TestIntroductionImpl"/>
-		<aop:pointcut id="testCut" expression="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))"/>
-		<aop:around method="invoke2" pointcut-ref="testCut"/>
-		<aop:around method="invoke" pointcut="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..)) and this(introduction)"/>
-		<aop:after-throwing throwing="ex" method="afterThrowing" pointcut-ref="testCut"/>
-		<aop:after-returning returning="val" method="afterReturning" pointcut-ref="testCut"/>
-		<aop:after method="after" pointcut-ref="testCut"/>
-		<aop:before method="before" pointcut-ref="testCut"/>
+							 default-impl="com.oocl.frm.demo.spring.aop.TestIntroductionImpl"></aop:declare-parents>
+		<aop:pointcut id="testCut" expression="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..))"></aop:pointcut>
+		<aop:around method="invoke2" pointcut-ref="testCut"></aop:around>
+		<aop:around method="invoke" pointcut="execution(* com.oocl.frm.demo.spring.aop.TestAction.*(..)) and this(introduction)"></aop:around>
+		<aop:after-throwing throwing="ex" method="afterThrowing" pointcut-ref="testCut"></aop:after-throwing>
+		<aop:after-returning returning="val" method="afterReturning" pointcut-ref="testCut"></aop:after-returning>
+		<aop:after method="after" pointcut-ref="testCut"></aop:after>
+		<aop:before method="before" pointcut-ref="testCut"></aop:before>
 	</aop:aspect>
 </aop:config>
 						</code></pre>
