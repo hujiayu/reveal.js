@@ -46,9 +46,10 @@
 
         <section>
             <h2>Agenda</h2>
-            <p>try with resource</p>
-            <p>ForkJoinPool</p>
-            <p>lambda expression</p>
+            <p><u>Language Specification</u></p>
+            <p>JVM Changes</p>
+            <p>Library & API</p>
+            <p>Misc</p>
         </section>
 
         <section>
@@ -56,24 +57,30 @@
                 <h2>Java 7 Language Specification</h2>
             </section>
             <section>
-                <h3>Binary Literals</h3>
-                <h3>Underscores in Numeric Literals</h3>
+                <p>Binary Literals</p>
+                <p>Underscores in Numeric Literals</p>
+                <pre><code class="hljs" data-trim contenteditable>
+        int binaryNumber = 0b011;
+        int underscoreNumber = 12_345_6789;
+        Assert.assertEquals(3, binaryNumber);
+        Assert.assertEquals(123456789, underscoreNumber);
+						</code></pre>
             </section>
             <section>
-                <h3>Strings in switch Statements</h3>
+                <p>Strings in switch Statements</p>
             </section>
             <section>
-                <h3>Type Inference for Generic Instance Creation</h3>
+                <p>Type Inference for Generic Instance Creation</p>
             </section>
             <section>
-                <h3>Improved Compiler Warnings and Errors When Using Non-Reifiable Formal Parameters with Varargs Methods</h3>
+                <p>Improved Compiler Warnings and Errors When Using Non-Reifiable Formal Parameters with Varargs Methods</p>
                 <p>@SafeVarargs and @SuppressWarnings({"unchecked", "varargs"})</p>
             </section>
             <section>
-                <h3>The try-with-resources Statement</h3>
+                <p>The try-with-resources Statement</p>
             </section>
             <section>
-                <h3>Catching Multiple Exception Types and Rethrowing Exceptions with Improved Type Checking</h3>
+                <p>Catching Multiple Exception Types and Rethrowing Exceptions with Improved Type Checking</p>
             </section>
         </section>
 
