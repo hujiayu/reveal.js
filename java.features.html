@@ -68,19 +68,65 @@
             </section>
             <section>
                 <p>Strings in switch Statements</p>
+                <pre><code class="hljs" data-trim contenteditable>
+String s = "test";
+switch (s) {
+case "test" :
+   System.out.println("test");
+case "test1" :
+   System.out.println("test1");
+break ;
+default :
+   System.out.println("break");
+break ;
+}						</code></pre>
             </section>
             <section>
                 <p>Type Inference for Generic Instance Creation</p>
+                <pre><code class="hljs" data-trim contenteditable>
+      List&lt;String> list = new ArrayList&lt;>();
+      List&lt;Map&lt;String, String> list2 = new ArrayList&lt;>();
+                </code></pre>
             </section>
             <section>
-                <p>Improved Compiler Warnings and Errors When Using Non-Reifiable Formal Parameters with Varargs Methods</p>
-                <p>@SafeVarargs and @SuppressWarnings({"unchecked", "varargs"})</p>
+                <p>Non-Reifiable Formal Parameters with Varargs</p>
+                <pre><code class="hljs" data-trim contenteditable>
+  public static &lt;T> void addToList (List&lt;T> listArg, T... elements) {
+    for (T x : elements) {
+      listArg.add(x);
+    }
+  }
+
+  public static void faultyMethod(List&lt;String>... l) {
+    Object[] objectArray = l;  // Valid
+    objectArray[0] = Arrays.asList(new Integer(42));
+    String s = l[0].get(0);    // ClassCastException thrown here
+  }
+
+                </code></pre>
+                <p>Heap pollution</p>
+                <p><small>@SafeVarargs or @SuppressWarnings({"unchecked", "varargs"})</small></p>
             </section>
             <section>
                 <p>The try-with-resources Statement</p>
+                <small>interface <code>java.lang.AutoCloseable</code></small>
+                <p><small>close immediately after try block</small></p>
+                <small>What if extra operation catch exception?</small>
             </section>
             <section>
                 <p>Catching Multiple Exception Types and Rethrowing Exceptions with Improved Type Checking</p>
+                <pre><code class="hljs" data-trim contenteditable>
+    private static void testMethod() throws ClassNotFoundException, FileNotFoundException {
+        try {
+            Class.forName("test");
+            new FileInputStream(new File("test"));
+        } catch (ClassNotFoundException | FileNotFoundException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+                </code></pre>
+                <small>Exception types must be disjoint</small>
             </section>
         </section>
 
@@ -89,13 +135,9 @@
                 <h2>Java 7 JVM Changes</h2>
             </section>
             <section>
-                <h3>Java Virtual Machine Support for Non-Java Languages</h3>
-            </section>
-            <section>
-                <h3>Garbage-First Collector is a server-style garbage collector that replaces the Concurrent Mark-Sweep Collector (CMS)</h3>
-            </section>
-            <section>
-                <h3>Java HotSpot Virtual Machine Performance Enhancements</h3>
+                <p>Java Virtual Machine Support for Non-Java Languages</p>
+                <p>Garbage-First Collector replaces the Concurrent Mark-Sweep Collector (CMS)</p>
+                <p>Java HotSpot Virtual Machine Performance Enhancements</p>
             </section>
         </section>
 
@@ -105,18 +147,21 @@
             </section>
             <section>
                 <h3>ForkJoinPool</h3>
+                <p>ForkJoinTask</p>
+                <p>fork()</p>
+                <p>join()</p>
+                <small>cannot cancel running task</small>
             </section>
             <section>
                 <h3>TransferQueue</h3>
+                <p>extends BlockingQueue</p>
+                <p>transfer()</p>
+                <p>producers may wait for consumers to receive elements</p>
             </section>
             <section>
-                <h3>co-bundled with the Mozilla Rhino JavaScript engine based on version 1.7R3 pre-release sources with Oracle modifications</h3>
-            </section>
-            <section>
-                <h3>Swing</h3>
-            </section>
-            <section>
-                <h3>Objects.*</h3>
+                <p>Mozilla Rhino JavaScript engine with modifications</p>
+                <p>Swing</p>
+                <p>Objects.*()</p>
             </section>
         </section>
 
@@ -127,32 +172,67 @@
             <section>
                 <h3>Lambda Expression</h3>
                 <h4>Functional Interface</h4>
-                <h4>Default & static method in interface</h4>
-                <h3>Annotation Based</h3>
+                <h4>Default method in interface</h4>
+                <h4>Expression Syntax</h4>
+                <h4>Scope</h4>
+            </section>
+            <section>
+                <h3>Functional Interface</h3>
+                <p>only one abstract method</p>
+                <p>@FunctionalInterface contract</p>
+            </section>
+            <section>
+                <h3>Default method</h3>
+                <p>compatibility</p>
+                <p>funtional interface</p>
+                <p>extends from multiple interface</p>
+            </section>
+            <section>
+                <h3>Lambda Expression</h3>
+                <p>simplify anonymous inner class</p>
+                <p>designed to single responsibility</p>
                 <pre><code class="hljs" data-trim contenteditable>
-@FunctionInterface
-public class MessagePrinter {
-
-    public static void printMessage(String msg) {
-        System.out.println(msg);
-    }
-}
-
+Collections.sort(names, (String a, String b) -> {return b.compareTo(a)});
+Collections.sort(names, (String a, String b) -> b.compareTo(a));
+Collections.sort(names, (a, b) -> b.compareTo(a));
 						</code></pre>
             </section>
             <section>
+                <h3>Lambda expression scope</h3>
+                <p>local variable: final</p>
+                <p>static variable</p>
+                <p>class variable</p>
+                <p>default method: no!</p>
+            </section>
+            <section>
+                <h3>Lambda expression advanced</h3>
+                <p>serialization</p>
+                <p>asm 5.x</p>
+            </section>
+            <section>
                 <h3>Stream API</h3>
+                <p>java.util.Stream</p>
+                <p>Collection.stream() </p>
+                <p>Collection.parallelStream() </p>
             </section>
             <section>
-                <h3>Collections</h3>
-                <p>Aggregate operations</p>
-                <p>HashMap key collision improvement</p>
+                <h3>Repeating Annotations</h3>
+                <pre><code class="hljs" data-trim contenteditable>
+@Schedule(dayOfMonth="last")
+@Schedule(dayOfWeek="Fri", hour="23")
+public void doPeriodicCleanup() { ... }
+						</code></pre>
             </section>
-            <section>
-                <h3>Compact Profiles</h3>
+            <section>eeeeeeeee
+                <h3>Method Parameter Reflection</h3>
+                <p>Executable.getParameters()</p>
+                <p>get parameter name</p>
+                <p>compile with -parameters option</p>
             </section>
             <section>
                 <h3>Date-Time Package</h3>
+                <p>similar to joda-time</p>
+                <p>immutable instance</p>
             </section>
         </section>
 
@@ -171,19 +251,21 @@ public class MessagePrinter {
                 <h2>Java 8 Library & API</h2>
             </section>
             <section>
-                <h3>Method Parameter Reflection</h3>
+                <h3>Collections</h3>
+                <p>Aggregate operations</p>
+                <p>HashMap key collision improvement</p>
             </section>
             <section>
-                <h3>Concurrency Utilities Enhancement</h3>
+                <h3>Compact Profiles</h3>
+                <p>a subset of the full Java SE Platform API</p>
+                <p>compact1, compact2, and compact3</p>
+                <p>compile with -profile option</p>
             </section>
             <section>
-                <h3>The JDBC-ODBC Bridge has been removed</h3>
-            </section>
-            <section>
-                <h3>co-bundled with the Nashorn, which is an implementation of the ECMAScript Edition 5.1 Language Specification</h3>
-            </section>
-            <section>
-                <h3>JavaFX</h3>
+                <p>Concurrency Utilities Enhancement</p>
+                <p>The JDBC-ODBC Bridge has been removed</p>
+                <p>Nashorn ECMAScript engine</p>
+                <p>JavaFX</p>
             </section>
         </section>
 
@@ -192,7 +274,7 @@ public class MessagePrinter {
                 <h2>Java 8 Misc</h2>
             </section>
             <section>
-                <h3>Java Deployment</h3>
+                <p>Java Deployment</p>
             </section>
         </section>
 
