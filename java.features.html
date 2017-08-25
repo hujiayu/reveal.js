@@ -69,23 +69,23 @@
             <section>
                 <p>Strings in switch Statements</p>
                 <pre><code class="hljs" data-trim contenteditable>
-String s = "test";
-switch (s) {
-case "test" :
-   System.out.println("test");
-case "test1" :
-   System.out.println("test1");
-break ;
-default :
-   System.out.println("break");
-break ;
-}						</code></pre>
+        switch (reportDocument.getReportPeriod()){
+            case "day":
+                builder = CronScheduleBuilder.dailyAtHourAndMinute(hour, 0);
+                break;
+            case "week":
+                builder = CronScheduleBuilder.atHourAndMinuteOnGivenDaysOfWeek(hour, 0, day);
+                break;
+            case "month":
+                builder = CronScheduleBuilder.monthlyOnDayAndHourAndMinute(day, hour, 0);
+                break;
+        }						</code></pre>
             </section>
             <section>
                 <p>Type Inference for Generic Instance Creation</p>
                 <pre><code class="hljs" data-trim contenteditable>
       List&lt;String> list = new ArrayList&lt;>();
-      List&lt;Map&lt;String, String> list2 = new ArrayList&lt;>();
+      List&lt;Map&lt;String, String>> list2 = new ArrayList&lt;>();
                 </code></pre>
             </section>
             <section>
@@ -102,7 +102,6 @@ break ;
     objectArray[0] = Arrays.asList(new Integer(42));
     String s = l[0].get(0);    // ClassCastException thrown here
   }
-
                 </code></pre>
                 <p>Heap pollution</p>
                 <p><small>@SafeVarargs or @SuppressWarnings({"unchecked", "varargs"})</small></p>
@@ -111,7 +110,81 @@ break ;
                 <p>The try-with-resources Statement</p>
                 <small>interface <code>java.lang.AutoCloseable</code></small>
                 <p><small>close immediately after try block</small></p>
-                <small>What if extra operation catch exception?</small>
+                <pre><code class="hljs" data-trim contenteditable>
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT sysdate FROM dual");) {
+            if (resultSet.next()) {
+                System.out.println(resultSet.getDate(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+                </code></pre>
+                <small>What if extra operation catch exception? -> <code>connection.rollback()</code></small>
+            </section>
+            <section>
+                <p>Try-with-resources - Solution 1</p>
+                <pre><code class="hljs" data-trim contenteditable>
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery("SELECT sysdate FROM dual")) {
+                if (resultSet.next()) {
+                    System.out.println(resultSet.getDate(1));
+                }
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+                </code></pre>
+            </section>
+            <section>
+                <p>Try-with-resources - Solution 2</p>
+                <pre><code class="hljs" data-trim contenteditable>
+    try (Connection connection = getConnection();
+         RollbackConnection rollbackConnection = new RollbackConnection(connection, false);
+         Statement statement = connection.createStatement();
+         ResultSet resultSet = statement.executeQuery("SELECT sysdate FROM dual");) {
+        if (resultSet.next()) {
+            System.out.println(resultSet.getDate(1));
+        }
+        rollbackConnection.commit();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    public class RollbackConnection implements AutoCloseable {
+
+        private Connection connection;
+        private boolean autoCommit;
+        private boolean committed;
+
+        public RollbackConnection(Connection connection, boolean autoCommit) throws SQLException {
+            this.connection = connection;
+            this.autoCommit = autoCommit;
+            this.connection.setAutoCommit(autoCommit);
+        }
+
+        public void commit() throws SQLException {
+            if (!autoCommit) {
+                connection.commit();
+            }
+            committed = true;
+        }
+
+        @Override
+        public void close() throws SQLException {
+            if (!autoCommit && !committed) {
+                connection.rollback();
+            }
+            connection.close();
+        }
+    }
+                </code></pre>
             </section>
             <section>
                 <p>Catching Multiple Exception Types and Rethrowing Exceptions with Improved Type Checking</p>
@@ -191,10 +264,15 @@ break ;
                 <h3>Lambda Expression</h3>
                 <p>simplify anonymous inner class</p>
                 <p>designed to single responsibility</p>
+            </section>
+            <section>
+                <h3>Lambda Expression Syntax</h3>
                 <pre><code class="hljs" data-trim contenteditable>
 Collections.sort(names, (String a, String b) -> {return b.compareTo(a)});
 Collections.sort(names, (String a, String b) -> b.compareTo(a));
 Collections.sort(names, (a, b) -> b.compareTo(a));
+
+debugCheckBox.addItemListener(this::debugCheckChanged);
 						</code></pre>
             </section>
             <section>
@@ -211,7 +289,7 @@ Collections.sort(names, (a, b) -> b.compareTo(a));
             </section>
             <section>
                 <h3>Stream API</h3>
-                <p>java.util.Stream</p>
+                <p>java.util.stream</p>
                 <p>Collection.stream() </p>
                 <p>Collection.parallelStream() </p>
             </section>
@@ -223,7 +301,7 @@ Collections.sort(names, (a, b) -> b.compareTo(a));
 public void doPeriodicCleanup() { ... }
 						</code></pre>
             </section>
-            <section>eeeeeeeee
+            <section>
                 <h3>Method Parameter Reflection</h3>
                 <p>Executable.getParameters()</p>
                 <p>get parameter name</p>
