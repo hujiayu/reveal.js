@@ -245,7 +245,7 @@
             <section>
                 <h3>Lambda Expression</h3>
                 <h4>Functional Interface</h4>
-                <h4>Default method in interface</h4>
+                <h4>Interface default/static method</h4>
                 <h4>Expression Syntax</h4>
                 <h4>Scope</h4>
             </section>
@@ -255,29 +255,47 @@
                 <p>@FunctionalInterface contract</p>
             </section>
             <section>
-                <h3>Default method</h3>
+                <h3>Interface default/static method</h3>
                 <p>compatibility</p>
                 <p>funtional interface</p>
-                <p>extends from multiple interface</p>
+                <p>extends from multiple interface?</p>
             </section>
             <section>
                 <h3>Lambda Expression</h3>
+                <pre><code class="hljs" data-trim contenteditable>
+        Collections.sort(stringList, new Comparator&lt;String>() {
+            @Override
+            public int compare(String a, String b) {
+                return b.compareTo(a);
+            }
+        });
+						</code></pre>
                 <p>simplify anonymous inner class</p>
                 <p>designed to single responsibility</p>
             </section>
             <section>
                 <h3>Lambda Expression Syntax</h3>
                 <pre><code class="hljs" data-trim contenteditable>
-Collections.sort(names, (String a, String b) -> {return b.compareTo(a)});
+Collections.sort(names, (String a, String b) -> {return b.compareTo(a);});
 Collections.sort(names, (String a, String b) -> b.compareTo(a));
 Collections.sort(names, (a, b) -> b.compareTo(a));
+Collections.sort(names, (a, b) -> this::compareTo);
+Collections.sort(names, (a, b) -> Comparator::compareTo);
 
-debugCheckBox.addItemListener(this::debugCheckChanged);
+int compareTo(String a, String b) {
+    return b.compareTo(a);
+}
+
+public class Comparator {
+    static int compareTo(String a, String b) {
+        return b.compareTo(a);
+    }
+}
 						</code></pre>
             </section>
             <section>
                 <h3>Lambda expression scope</h3>
-                <p>local variable: final</p>
+                <p>local variable: effectively final</p>
                 <p>static variable</p>
                 <p>class variable</p>
                 <p>default method: no!</p>
@@ -288,10 +306,60 @@ debugCheckBox.addItemListener(this::debugCheckChanged);
                 <p>asm 5.x</p>
             </section>
             <section>
-                <h3>Stream API</h3>
-                <p>java.util.stream</p>
+                <h3>Stream - Creation</h3>
+                <p>java.util.stream.Stream</p>
+                <p>Stream.of()</p>
                 <p>Collection.stream() </p>
                 <p>Collection.parallelStream() </p>
+                <p>Arrays.stream() </p>
+            </section>
+            <section>
+                <h3>Stream API - intermediate operation</h3>
+                <ul>
+                    <li> filter(Predicate predicate)</li>
+                    <li> map(Function mapper)</li>
+                    <li>flatMap(Function mapper)</li>
+                    <li> distinct()</li>
+                    <li> peek(Consumer action)</li>
+                    <li> limit(long maxSize)</li>
+                    <li> skip(long n)</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Stream API - terminal operation</h3>
+                <ul>
+                    <li> <u>forEach</u>(Consumer action)</li>
+                    <li> <u>collect</u>(Collector collector)</li>
+                    <li> toArray()</li>
+                    <li> <u>reduce</u>(BinaryOperator accumulator)</li>
+                    <li> min(Comparator comparator)</li>
+                    <li> max(Comparator comparator)</li>
+                    <li> count()</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Stream API - lazy computation</h3>
+                <p>efficiency</p>
+                <pre><code class="hljs" data-trim contenteditable>
+    Stream.of("one", "two", "three", "four")
+            .filter(e -> e.length() > 3)
+            .peek(e -> System.out.println("Filtered value: " + e))
+            .map(String::toUpperCase)
+            .peek(e -> System.out.println("Mapped value: " + e))
+            .collect(Collectors.toList());
+						</code></pre>
+                <p>result?</p>
+            </section>
+            <section>
+                <h3>Stream API - useful API</h3>
+                <p>Optional</p>
+                <p>Spliterator</p>
+                <p>primitive type new APIs</p>
+                <p>BufferedReader.lines()</p>
+                <p>ThreadLocal.withInitial()</p>
+                <p>Iterable.forEach()</p>
+                <p>List.sort()</p>
+                <p>Map.computeIfAbsent()...</p>
             </section>
             <section>
                 <h3>Repeating Annotations</h3>
